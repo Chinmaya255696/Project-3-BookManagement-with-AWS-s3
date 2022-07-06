@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        valid: !(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/),
         unique: true,
         trim:true
     },
