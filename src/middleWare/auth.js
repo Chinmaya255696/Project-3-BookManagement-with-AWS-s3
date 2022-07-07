@@ -23,7 +23,7 @@ const Authentication = function (req, res, next) {
 
 //=================[Authorisation Middleware]============================
 
-const Authorisation = async function (req, res, next) { 
+const Auth = async function (req, res, next) { 
     try {
         let token = req.headers["x-api-key"]
         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
@@ -48,7 +48,7 @@ const Authorisation = async function (req, res, next) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
-module.exports ={Authentication, Authorisation} ;
+module.exports ={Authentication, Auth} ;
 
 const mid3 = async function (req,res,next){
     try {
