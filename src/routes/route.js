@@ -2,10 +2,22 @@ const express = require('express');
 const router = express.Router();
 const userController = require("../controller/userController");
 const booksController = require("../controller/booksController");
+const commnMid = require("../Middleware/auth")
+const reviewController = require("../controller/reviewController");
 
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
-router.post("/books", booksController.createBook)
+router.post("/books", commnMid.Authentication, booksController.createBook)
+router.get('/books', commnMid.Authentication, booksController.getBook)
+router.get('/books/:bookId', commnMid.Authentication, booksController.getBookById)
+router.put('/books/:bookId', booksController.updateBook)
+
+router.delete('/books/:bookId', booksController.deleteBookById)
+router.post("/books/:bookId/review", reviewController.createReview)
+
+
+
+
 
 router.all("/**", function (req, res) {
     res.status(404).send({
