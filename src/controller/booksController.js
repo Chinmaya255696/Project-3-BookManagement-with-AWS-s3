@@ -58,27 +58,28 @@ const getBook = async function (req, res) {
             if (!userIdCheck) { return res.status(404).send({ status: false, msg: "userId is not exist" }) }
             let bookData = await booksModel.find({ userId: userIdCheck, isDeleted: false })
             if (bookData.length == 0) { return res.status(404).send({ status: false, msg: "No such Books are found for this userId" }) }
-            else { return res.status(200).send({ data: bookData }) }
+            else { return res.status(200).send({status:true, message:"Books List", data: bookData }) }
         }
 
         else if (req.query.category) {
             let category = req.query.category
             let categoryCheck = await booksModel.find({ category: category, isDeleted: false })
             if (categoryCheck.length == 0) { return res.status(404).send({ status: false, msg: "No such similar books are find by the category" }) }
-            else { return res.status(200).send({ data: categoryCheck }) };
+            else { return res.status(200).send({status:true, message:"Books List", data: categoryCheck }) };
 
         } else if (req.query.subcategory) {
 
             let subcategory = req.query.subcategory
             let subcategoryCheck = await booksModel.find({ subcategory: subcategory, isDeleted: false })
             if (subcategoryCheck.length == 0) { return res.status(404).send({ status: false, msg: "No such similar books are find by the subcategory" }) }
-            else { return res.status(200).send({ data: subcategoryCheck }) };
+            else { return res.status(200).send({status:true, message:"Books List", data: subcategoryCheck }) };
         } else {
             return res.status(400).send({ status: false, msg: "Please provide the details which you want to see" })
         }
     } catch (err) {
         return res.status(500).send({ msg: "Error", error: err.message });
     }
+    // sorting required
 };
 
 const getBookById = async function (req, res) {
@@ -92,7 +93,7 @@ const getBookById = async function (req, res) {
 
         const getReviewsData = await reviewModel.find({ bookId: checkBook._id, isDeleted: false })
 
-        return res.status(200).send({ status: true, message: "Book List", data: getReviewsData });
+        return res.status(200).send({ status: true, message: "Books List", data: getReviewsData });
     } catch (err) {
         return res.status(500).send({ status: false, error: err.message });
     }
@@ -163,7 +164,7 @@ const deleteBookById = async function (req, res) {
         let checkBook = await booksModel.findOne({ _id: book_id, isDeleted: false });
 
         if (!checkBook)
-            return res.status(400).send({ status: false, message: "BookId Not Found" });
+            return res.status(400).send({ status: false, message: "Book is already deleted" });
 
         const deleteBookData = await booksModel.findOneAndUpdate({ _id: checkBook._id }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
 
