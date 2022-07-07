@@ -6,6 +6,8 @@ const booksController = require("../controller/booksController");
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
 router.post("/books", booksController.createBook)
+router.get('/books',authentication,bookController.getBook)
+router.get('/books/:bookId',authentication,bookController.getBookById)
 
 router.all("/**", function (req, res) {
     res.status(404).send({
