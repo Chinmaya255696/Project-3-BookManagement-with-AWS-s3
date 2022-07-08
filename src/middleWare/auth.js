@@ -23,21 +23,21 @@ const Authentication = function (req, res, next) {
 
 //=================[Authorisation Middleware]============================
 
-const Auth = async function (req, res, next) { 
+const Auth2 = async function (req, res, next) { 
     try {
         let token = req.headers["x-api-key"]
         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
         let decodedToken = jwt.verify(token, "group11-project3")
         
         let userToBeModified = req.params.bookId
-        // console.log(authorToBeModified)
+        console.log(userToBeModified)
  
-        let book = await booksModel.findById({_id : userToBeModified})
-    //   console.log(blog)
-      if (!book) {
-        return res.status(404).send({ status: false, msg: "No such blog exists" });
+        let book = await booksModel.findById({_id : userToBeModified}).select({_id:1})
+      console.log(book)
+      if (Object.keys(book).length==0) {
+        return res.status(404).send({ status: false, msg: "No such book exists" });
     }
-    //   console.log(decodedToken) 
+      console.log(decodedToken) 
         let userLogin = decodedToken.userId
     
         if ( book.userId != userLogin) 
@@ -47,22 +47,22 @@ const Auth = async function (req, res, next) {
     catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
-};
-module.exports ={Authentication, Auth} ;
-
-const mid3 = async function (req,res,next){
-    try {
-        let token = req.headers["x-api-key"]
-        if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
-        let decodedToken = jwt.verify(token, "group11-project3")
-        let userId = req.query.userId
-        
-        if ( userId && userId !== decodedToken.userId ) return res.status(400).send({ status: false, msg: "You are not authorized to delete these blogs. userId doesn't belong to you."})
-        req.userId = decodedToken.userId
-        next()
-    } catch (err) {
-        return res.status(500).send({ status: false, msg: err.message })
-    }
-
 }
-module.exports.mid3 = mid3 ;
+
+// const mid3 = async function (req,res,next){
+//     try {
+//         let token = req.headers["x-api-key"]
+//         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
+//         let decodedToken = jwt.verify(token, "group11-project3")
+//         let userId = req.query.userId
+        
+//         if ( userId && userId !== decodedToken.userId ) return res.status(400).send({ status: false, msg: "You are not authorized to delete these books. userId doesn't belong to you."})
+//         req.userId = decodedToken.userId
+//         next()
+//     } catch (err) {
+//         return res.status(500).send({ status: false, msg: err.message })
+//     }
+
+// }
+
+module.exports ={Authentication, Auth2} ;

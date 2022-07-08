@@ -7,12 +7,12 @@ const reviewController = require("../controller/reviewController");
 
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
-router.post("/books", commnMid.Authentication, commnMid.Auth, booksController.createBook)
+router.post("/books", commnMid.Authentication,   booksController.createBook)
 router.get('/books', commnMid.Authentication, booksController.getBook)
 router.get('/books/:bookId', commnMid.Authentication, booksController.getBookById)
-router.put('/books/:bookId',commnMid.Authentication, commnMid.Auth, booksController.updateBook)
+router.put('/books/:bookId', commnMid.Authentication,  booksController.updateBook)
 
-router.delete('/books/:bookId',  booksController.deleteBookById)
+router.delete('/books/:bookId', commnMid.Authentication,  booksController.deleteBookById)
 router.post("/books/:bookId/review", reviewController.createReview)
 
 

@@ -35,10 +35,10 @@ const createUser = async function (req, res) {
     if (!(/^.{8,15}$/.test(data.password))) { return res.status(400).send({ status: false, message: "Password length should be in between 8 to 15" }) };
 
     let saveData = await userModel.create(data)
-    { return res.status(201).send({ status: true, message: 'Success', data: saveData }) };
+     res.status(201).send({ status: true, message: 'Success', data: saveData }) ;
   }
   catch (err) {
-    { return res.status(500).send({ status: false, msg: "Error", error: err.message }) };
+     res.status(500).send({ status: false, msg: "Error", error: err.message }) ;
   }
 }
 
@@ -70,11 +70,11 @@ const loginUser = async function (req, res) {
       "group11-project3"
     );
 
-    { return res.status(201).send({ status: true, data: token }) };
+     res.status(201).send({ status: true, data: token }) ;
 
   }
   catch (err) {
-    { return res.status(500).send({ status: false, msg: err.message }) };
+   res.status(500).send({ status: false, msg: err.message }) ;
   }
 };
 
