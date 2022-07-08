@@ -57,15 +57,14 @@ const loginUser = async function (req, res) {
     if (!(/^.{8,15}$/.test(password1))) { return res.status(400).send({ status: false, message: "password length should be in between 8 to 15" }) };
 
     let user = await userModel.findOne({ email: email1, password: password1, });
-    if (!user) { return res.status(404).send({ status: false, msg: "Email or the Password doesn't match" }) };
+    if (!user) { return res.status(401).send({ status: false, msg: "Email or the Password doesn't match" }) };
 
     let token = jwt.sign(
       {
         userId: user._id.toString(),
         group: "eleven",
         project: "BookManagement",
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
+  
       },
       "group11-project3"
     );

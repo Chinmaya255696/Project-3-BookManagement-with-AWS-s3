@@ -88,7 +88,7 @@ const getBook = async function (req, res) {
         else if (req.query.category) {
             let category = req.query.category
             let categoryCheck = await booksModel.find({ category: category, isDeleted: false }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 }).sort({ title: 1 })
-            if (categoryCheck.length == 0) { return res.status(404).send({ status: false, msg: "No such similar books are fonnd by the category" }) }
+            if (categoryCheck.length == 0) { return res.status(404).send({ status: false, msg: "No such similar books are found by the category" }) }
             else { return res.status(200).send({ status: true, message: "Books List", data: categoryCheck }) };
 
         } else if (req.query.subcategory) {
@@ -152,7 +152,7 @@ const updateBook = async function (req, res) {
         let data = req.body
         let bookId = req.params.bookId
         if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) {
-            return res.status(404).send({ status: false, message: "BlogId format isn't correct" })
+            return res.status(400).send({ status: false, message: "BookId format isn't correct" })
         }
 
         let book = await booksModel.findById({ _id: bookId })
@@ -161,17 +161,17 @@ const updateBook = async function (req, res) {
         }
 
         if (Object.keys(data).length == 0) {
-            return res.status(404).send({ status: false, message: "Please provide data in body" })
+            return res.status(400).send({ status: false, message: "Please provide data in body" })
         };
 
         let checkBook = await booksModel.findOne({ title: data.title })
         if (checkBook) {
-            return res.status(404).send({ status: false, message: "Title is already used, try anothor" })
+            return res.status(400).send({ status: false, message: "Title is already used, try anothor" })
         }
 
         let checkBook2 = await booksModel.findOne({ ISBN: data.ISBN })
         if (checkBook2) {
-            return res.status(404).send({ status: false, message: "ISBN is already used, try another" })
+            return res.status(400).send({ status: false, message: "ISBN is already used, try another" })
         }
 
         let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { $set: { title: data.title, excerpt: data.excerpt, releasedAt: data.releasedAt, ISBN: data.ISBN } }, { new: true })

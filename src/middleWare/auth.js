@@ -23,31 +23,31 @@ const Authentication = function (req, res, next) {
 
 //=================[Authorisation Middleware]============================
 
-const Auth2 = async function (req, res, next) { 
-    try {
-        let token = req.headers["x-api-key"]
-        if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
-        let decodedToken = jwt.verify(token, "group11-project3")
+// const Auth2 = async function (req, res, next) { 
+//     try {
+//         let token = req.headers["x-api-key"]
+//         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
+//         let decodedToken = jwt.verify(token, "group11-project3")
         
-        let userToBeModified = req.params.bookId
-        console.log(userToBeModified)
+//         let userToBeModified = req.params.bookId
+//         console.log(userToBeModified)
  
-        let book = await booksModel.findById({_id : userToBeModified}).select({_id:1})
-      console.log(book)
-      if (Object.keys(book).length==0) {
-        return res.status(404).send({ status: false, msg: "No such book exists" });
-    }
-      console.log(decodedToken) 
-        let userLogin = decodedToken.userId
+//         let book = await booksModel.findById({_id : userToBeModified}).select({_id:1})
+//       console.log(book)
+//       if (Object.keys(book).length==0) {
+//         return res.status(404).send({ status: false, msg: "No such book exists" });
+//     }
+//       console.log(decodedToken) 
+//         let userLogin = decodedToken.userId
     
-        if ( book.userId != userLogin) 
-            return res.status(403).send({ status: false, msg: 'You are not authorized.' })
-        next()
-    }
-    catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
-    }
-}
+//         if ( book.userId != userLogin) 
+//             return res.status(403).send({ status: false, msg: 'You are not authorized.' })
+//         next()
+//     }
+//     catch (err) {
+//         res.status(500).send({ msg: "Error", error: err.message })
+//     }
+// }
 
 // const mid3 = async function (req,res,next){
 //     try {
@@ -65,4 +65,4 @@ const Auth2 = async function (req, res, next) {
 
 // }
 
-module.exports ={Authentication, Auth2} ;
+module.exports ={Authentication} ;
