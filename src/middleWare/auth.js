@@ -1,10 +1,6 @@
 const jwt = require("jsonwebtoken");
 const booksModel = require("../models/booksModel");
 
-
-
- //==================== [Authentication Middleware]===============================
-
 const Authentication = function (req, res, next) {
     try {
     token = req.headers["x-api-key"];
@@ -21,48 +17,31 @@ const Authentication = function (req, res, next) {
     }
 }
 
-//=================[Authorisation Middleware]============================
+let AuthByQuery = async function (req, res, next) {
+    try {
+        let token = req.headers["x-api-key"];
 
-// const Auth2 = async function (req, res, next) { 
-//     try {
-//         let token = req.headers["x-api-key"]
-//         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
-//         let decodedToken = jwt.verify(token, "group11-project3")
-        
-//         let userToBeModified = req.params.bookId
-//         console.log(userToBeModified)
- 
-//         let book = await booksModel.findById({_id : userToBeModified}).select({_id:1})
-//       console.log(book)
-//       if (Object.keys(book).length==0) {
-//         return res.status(404).send({ status: false, msg: "No such book exists" });
-//     }
-//       console.log(decodedToken) 
-//         let userLogin = decodedToken.userId
-    
-//         if ( book.userId != userLogin) 
-//             return res.status(403).send({ status: false, msg: 'You are not authorized.' })
-//         next()
-//     }
-//     catch (err) {
-//         res.status(500).send({ msg: "Error", error: err.message })
-//     }
-// }
+        let decodeToken = jwt.verify(token, "group11-project3");
 
-// const mid3 = async function (req,res,next){
-//     try {
-//         let token = req.headers["x-api-key"]
-//         if (!token) return res.status(400).send({ status: false, msg: "token must be present " })
-//         let decodedToken = jwt.verify(token, "group11-project3")
-//         let userId = req.query.userId
-        
-//         if ( userId && userId !== decodedToken.userId ) return res.status(400).send({ status: false, msg: "You are not authorized to delete these books. userId doesn't belong to you."})
-//         req.userId = decodedToken.userId
-//         next()
-//     } catch (err) {
-//         return res.status(500).send({ status: false, msg: err.message })
-//     }
+        let requestBookId = req.params.bookId
+        if (requestBookId.length != 24)
+            return res.status(400).send({ msg: "enter valid bookid" });
 
-// }
+        let findBookID = await booksModel.findById({ _id: requestBookId });
+        if (!findBookID) return res.status(404).send({ err: "Book not found " });
 
-module.exports ={Authentication} ;
+        let userLogin = decodeToken.userId
+        if (findBookID.userId != userLogin)
+            return res.status(403).send({ msg: "logedin user is not authorized " });
+
+        next();
+    } catch (error) {
+        return res.status(500).send({ err: error.message });
+    }
+};
+
+
+module.exports = { Authentication, Auth2, AuthByQuery };
+
+
+// module.exports ={Authentication} ;
