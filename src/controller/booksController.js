@@ -169,7 +169,7 @@ const getBookById = async function (req, res) {
             releasedAt: checkBook.releasedAt,
             createdAt: checkBook.createdAt,
             updatedAt: checkBook.updatedAt,
-            reviewsData: reviewsData.length == 0 ? "No such reviews present" : reviewsData
+            reviewsData: reviewsData.length == 0 ? [] : reviewsData
         };
 
         {return res.status(200).send({ status: true, message: "Books List", data: data })};

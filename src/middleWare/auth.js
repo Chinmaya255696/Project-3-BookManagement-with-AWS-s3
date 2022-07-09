@@ -17,6 +17,30 @@ const Authentication = function (req, res, next) {
     }
 }
 
+let Auth2= async function (req, res, next) {
+    try {
+      let token = req.headers["x-api-key"];
+  
+      let decodeToken = jwt.verify(token, "group11-project3" );
+      
+      let requestUserId = req.body.userId 
+      if(!requestUserId) return res.status(400).send({err:"please enter userID"}) 
+  
+      if(requestUserId.length != 24) return res.status(400).send({ msg: "enter valid userID" });
+  
+     const userloggId = await userModel.findOne({ _id: requestUserId });
+      if (! userloggId) return res.status(404).send({ err: "UserID not found " });
+      let userLoggin = decodeToken.userId
+      if (userloggId._id!= userLoggin)
+        return res.status(403).send({ msg: "logedin user is not authorized To create book"});
+  
+      next();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ err: error.message });
+    }
+  }; 
+
 let AuthByQuery = async function (req, res, next) {
     try {
         let token = req.headers["x-api-key"];
@@ -42,6 +66,3 @@ let AuthByQuery = async function (req, res, next) {
 
 
 module.exports = { Authentication, Auth2, AuthByQuery };
-
-
-// module.exports ={Authentication} ;
