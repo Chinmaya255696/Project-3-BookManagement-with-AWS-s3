@@ -37,8 +37,8 @@ const createReview = async function(req, res){
         if((data.isDeleted)===true)
             return res.status(400).send({status:false,msg:"This field value sholud be false"})
 
-    let checkBook = await booksModel.findOne({ _id: BookId, isDeleted: false });
-        if (!checkBook) 
+    let book = await booksModel.findOne({ _id: BookId, isDeleted: false });
+        if (!book) 
             { return res.status(404).send({ status: false, message: "BookId Not Found" }) };
 
     const reviewData = await reviewModel.create(data)
@@ -92,12 +92,38 @@ const updateReview = async function (req, res) {
               }}
                
   
-      let updatedReview = await reviewModel.findOneAndUpdate(
+      let updateReviewData = await reviewModel.findOneAndUpdate(
         { _id: reviewId },{$set: {reviewedBy:data.reviewedBy, rating:data.rating, review: data.review},},{ new: true });
-  
-        let result=book.toObject()
-      result.reviewsData=updateReviewData 
-      {return res.status(200).send({ status: true, message: "Books list", data: result });}
+  let data3 = await reviewModel.find({_id:reviewId, isDeleted:false})
+
+    //     let result=book.toObject()
+    //   result.reviewsData=updateReviewData 
+    // const reviewsData = book.map(review => {
+    //     return {
+    //         _id: review._id,
+    //         bookId: review.bookId,
+    //         reviewedBy: review.reviewedBy,
+    //         reviewedAt: review.reviewedAt,
+    //         rating: review.rating,
+    //         review: review.review
+    //     }
+    // });
+    const data2 = {
+        _id: book._id,
+        title: book.title,
+        excerpt: book.excerpt,
+        userId: book.userId,
+        category: book.category,
+        subcategory: book.subcategory,
+        isDeleted: book.isDeleted,
+        reviews: book.reviews,
+        releasedAt: book.releasedAt,
+        createdAt: book.createdAt,
+        updatedAt: book.updatedAt,
+        reviewsData: data3.length == 0 ? [] : data3
+    };
+
+      {return res.status(200).send({ status: true, message: "Books list", data: data2 });}
   
     } catch (err) {
       {return res.status(500).send({ status: false, msg: "Error", error: err.message });}}
@@ -110,9 +136,9 @@ const updateReview = async function (req, res) {
   
       if (!/^[0-9a-fA-F]{24}$/.test(book_id)) {return res.status(400).send({ status: false, message: "BookId format isn't correct" });}
   
-      let checkBook = await booksModel.findOne({ _id: book_id,isDeleted: false,});
+      let book = await booksModel.findOne({ _id: book_id,isDeleted: false,});
   
-      if (!checkBook) {
+      if (!book) {
         return res.status(404).send({ status: false, message: "Book is already deleted" });}
   
       if (!/^[0-9a-fA-F]{24}$/.test(review_id)) {
@@ -124,11 +150,21 @@ const updateReview = async function (req, res) {
         return res.status(404).send({ status: false, message: "Review is already deleted" });}
   
       const deleteReviewData = await reviewModel.findOneAndUpdate({ _id: checkReview._id },{ $set: { isDeleted: true, deletedAt: new Date() } },{ new: true });
-  
-      if (deleteReviewData) {
-          await booksModel.findOneAndUpdate({ _id: book_id },{$inc:{ reviews: -1 }})
-           }
-  
+  let countData1 = await reviewModel.countDocuments({bookId:book_id, isDeleted:false})
+  const updateReview =  await booksModel.findByIdAndUpdate({_id:book_id},{$set:{reviews:countData1}}, {new:true})
+    //   if (deleteReviewData) {
+    //       await booksModel.findOneAndUpdate({ _id: book_id },{$inc:{ reviews: -1 }})
+    //        }
+    let finalData1={
+        _id:deleteReviewData._id,
+        bookId:deleteReviewData.bookId,
+        reviewedBy:deleteReviewData.reviewedBy,
+        reviewedAt:deleteReviewData.reviewedAt,
+        rating:deleteReviewData.rating,
+        reviews:updateReview.reviews,
+        isDeleted:deleteReviewData.isDeleted
+    }
+
       {
         return res.status(200).send({ status: true, message: "Review is deleted succesfully",data:deleteReviewData });
       }
