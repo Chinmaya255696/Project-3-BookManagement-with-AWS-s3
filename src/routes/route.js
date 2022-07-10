@@ -14,6 +14,8 @@ router.put('/books/:bookId', commnMid.Authentication, commnMid.AuthByQuery, book
 
 router.delete('/books/:bookId', commnMid.Authentication, commnMid.AuthByQuery, booksController.deleteBookById)
 router.post("/books/:bookId/review", reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 
