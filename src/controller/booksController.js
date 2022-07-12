@@ -7,7 +7,7 @@ const createBook = async function (req, res) {
     try {
         let data = req.body
 
-        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
+        // if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
 
         if (!data.title || data.title.trim().length == 0) { return res.status(400).send({ status: false, msg: "Title field is required" }) };
 
@@ -22,7 +22,12 @@ const createBook = async function (req, res) {
         if (!data.subcategory || data.subcategory.length == 0) { return res.status(400).send({ status: false, msg: "Subcategory field is required" }) };
 
         if (!data.releasedAt || data.releasedAt.length == 0) { return res.status(400).send({ status: false, msg: "releasedAt field is required" }) };
-
+        if(data.reviews){
+            if(!data.reviews==0){return res.status(400).send({status:false, message:"Reviews field should be in default 0"})}
+        }
+        if(data.isDeleted){
+            if(!data.isDeleted==false){return res.status(400).send({status:false, message:"isDeleted field should be in by default false"})}
+        }
         //title and ISBN is unique or not
         let titleCheck = await booksModel.findOne({ title: data.title });
         if (titleCheck) { return res.status(400).send({ status: false, msg: "Title is already registerd, try anothor" }) };

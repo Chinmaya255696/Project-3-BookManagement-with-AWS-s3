@@ -40,6 +40,10 @@ const createUser = async function (req, res) {
 
         if (!(/^.{8,15}$/.test(data.password))) { return res.status(400).send({ status: false, message: "Password length should be in between 8 to 15" }) };
 
+        if(data.address){
+            if(Object.keys(data.address).length==0){return res.status(400).send({ status: false, msg: "Please provide your address details" })}
+        }
+        
         let saveData = await userModel.create(data)
         { res.status(201).send({ status: true, message: 'Success', data: saveData }) };
     }

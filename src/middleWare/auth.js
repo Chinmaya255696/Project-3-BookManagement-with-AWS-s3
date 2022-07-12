@@ -22,6 +22,8 @@ let Auth2= async function (req, res, next) {
       let token = req.headers["x-api-key"];
   
       let decodeToken = jwt.verify(token, "group11-project3" );
+      if (Object.keys(req.body).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
+
       
       let requestUserId = req.body.userId 
       if(!requestUserId) return res.status(400).send({err:"please enter userID"}) 
