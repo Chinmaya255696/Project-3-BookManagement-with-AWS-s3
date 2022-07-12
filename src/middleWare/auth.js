@@ -50,8 +50,8 @@ let AuthByQuery = async function (req, res, next) {
         let decodeToken = jwt.verify(token, "group11-project3");
 
         let requestBookId = req.params.bookId
-        if (requestBookId.length != 24)
-            return res.status(400).send({ msg: "enter valid bookid" });
+
+        if (!(/^[0-9a-fA-F]{24}$/.test(requestBookId))) { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
 
         let findBookID = await booksModel.findById({ _id: requestBookId });
         if (!findBookID) return res.status(404).send({ err: "Book not found " });
