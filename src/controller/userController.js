@@ -74,7 +74,7 @@ const loginUser = async function (req, res) {
                 userId: user._id.toString(),
                 group: "eleven",
                 project: "BookManagement",
-                iat: Math.floor(Date.now() / 1000),
+                iat: Math.floor(Date.now() / 1000), //1sec=1000ms, date.now return times in milliseconds.
                 exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
 
             },
