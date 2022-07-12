@@ -42,8 +42,8 @@ const createBook = async function (req, res) {
             if (!(/^.{10,13}$/.test(data.ISBN))) 
                 { return res.status(400).send({ status: false, message: "ISBN length should be in between 10 to 13" }) };
 
-            if (!(/^[0-9]+$/.test(data.ISBN))) 
-                { return res.status(400).send({ status: false, message: "ISBN should be in Number type" }) };
+            if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){13})?$)/.test(data.ISBN))) 
+                { return res.status(400).send({ status: false, message: "ISBN should be in Number and hypen type" }) };
 
             if (!(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) 
                 { return res.status(400).send({ status: false, message: "ReleasedAt format should be in YYYY-MM-DD" }) };
@@ -59,21 +59,8 @@ const createBook = async function (req, res) {
 
         //after checking all validation than we structure our response data in JSON objectId from(key value pairs)
         let saveData = await booksModel.create(data)
-        let finaldata = {
-            _id: saveData._id,
-            title: saveData.title,
-            excerpt: saveData.excerpt,
-            userId: saveData.userId,
-            ISBN: saveData.ISBN,
-            category: saveData.category,
-            subcategory: saveData.subcategory,
-            isDeleted: saveData.isDeleted,
-            reviews: saveData.reviews,
-            releasedAt: data.releasedAt,
-            createdAt: saveData.createdAt,
-            updatedAt: saveData.updatedAt,
-        };
-        { return res.status(201).send({ status: true, message: "Success", data: finaldata }) };
+        
+        { return res.status(201).send({ status: true, message: "Success", data: saveData }) };
     }
     catch (err) {
         { return res.status(500).send({ status: false, msg: "Error", error: err.message }) }
@@ -183,8 +170,8 @@ const updateBook = async function (req, res) {
         let data = req.body
         let bookId = req.params.bookId
 
-            if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) 
-                {return res.status(400).send({status: false, message: "BookId format isn't correct"})};
+            // if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) 
+            //     {return res.status(400).send({status: false, message: "BookId format isn't correct"})};
 
         let book = await booksModel.findById({ _id: bookId })
             if (!book || book.isDeleted == true) 
@@ -192,14 +179,25 @@ const updateBook = async function (req, res) {
 
             if (Object.keys(data).length == 0) 
                 {return res.status(400).send({status: false, message: "Please provide data in body"})};
+                
+                if (!data.title || data.title.trim().length == 0) 
+                { return res.status(400).send({ status: false, msg: "Title field is required" }) };
 
+            
         let checkBook = await booksModel.findOne({ title: data.title })
             if (checkBook) 
                 { return res.status(400).send({status: false, message: "Title is already used, try anothor"})}
 
+                // if (!data.excerpt || data.excerpt.trim().length == 0) 
+                // { return res.status(400).send({ status: false, msg: "Excerpt field is required" }) };
+    
+
         let checkBook2 = await booksModel.findOne({ ISBN: data.ISBN })
             if (checkBook2) 
                 {return res.status(400).send({status: false, message: "ISBN is already used, try another"})}
+
+                // if (!data.releasedAt || data.releasedAt.length == 0) 
+                // { return res.status(400).send({ status: false, msg: "releasedAt field is required" }) };
 
         let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { $set: { title: data.title, excerpt: data.excerpt, releasedAt: data.releasedAt, ISBN: data.ISBN } }, { new: true })
 
@@ -215,15 +213,15 @@ const deleteBookById = async function (req, res) {
     try {
         let book_id = req.params.bookId;
 
-            if (!(/^[0-9a-fA-F]{24}$/.test(book_id))) 
-                { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) };
+            // if (!(/^[0-9a-fA-F]{24}$/.test(book_id))) 
+            //     { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) };
 
         let checkBook = await booksModel.findOne({ _id: book_id, isDeleted: false });
 
             if (!checkBook)
                 {return res.status(404).send({ status: false, message: "Book is already deleted" })};
 
-        const deleteBookData = await booksModel.findOneAndUpdate({ _id: checkBook._id }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
+        const deleteBookData = await booksModel.findOneAndUpdate({ _id: checkBook._id }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true })
 
             {return res.status(200).send({ status: true, message: "Book is deleted succesfully" })};
 
