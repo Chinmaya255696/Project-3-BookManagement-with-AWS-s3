@@ -11,22 +11,24 @@ const createReview = async function (req, res) {
     return res.status(400).send({ status: false, msg: "Please provide your Book details in body" });
   }
 
-  if (!/^[0-9a-fA-F]{24}$/.test(data.bookId)) {
+  if (!/^[0-9a-fA-F]{24}$/.test(BookId)) {
     return res.status(400).send({ status: false, message: "BookId format isn't correct" });
   }
 
-  if (!data.bookId || data.bookId.trim().length == 0) {
+  if (!BookId || BookId.trim().length == 0) {
     return res.status(400).send({ status: false, msg: "BookId field is required" });
   }
+
+  // if(BookId){
+
+  // }
 
   if (!data.reviewedBy || data.reviewedBy.trim().length == 0) {
     return res.status(400).send({ status: false, msg: "ReviewedBy field is required" });
   }
 
   if (!/^\s*([a-zA-Z])([^0-9]){2,64}\s*$/.test(data.reviewedBy)) {
-    return res
-      .status(400)
-      .send({ status: false, msg: "ReviewedBy should be in alphabat type" });
+    return res.status(400).send({ status: false, msg: "ReviewedBy should be in alphabat type" });
   }
 
   if (!data.reviewedAt || data.reviewedAt.trim().length == 0) {
@@ -69,7 +71,7 @@ const createReview = async function (req, res) {
 
   let finalData = {
     _id: reviewData._id,
-    bookId: reviewData.bookId,
+    bookId: BookId,
     reviewedBy: reviewData.reviewedBy,
     reviewedAt: reviewData.reviewedAt,
     rating: reviewData.rating,
@@ -89,25 +91,6 @@ const createReview = async function (req, res) {
 };
 
 
-const updateReview = async function (req, res) {
-  try {
-    let bookId = req.params.bookId;
-    let reviewId = req.params.reviewId;
-    let data = req.body;
-
-    if (!/^[0-9a-fA-F]{24}$/.test(bookId)) {
-      return res.status(400).send({ status: false, message: "BookId format isn't correct" });}
-
-    let book = await booksModel.findById({ _id: bookId });
-    if (!book || book.isDeleted == true) {
-      return res.status(404).send({ status: false, message: "No Book Found by this BookId" });
-    }
-
-    if (!/^[0-9a-fA-F]{24}$/.test(reviewId)) {
-      return res.status(400).send({ status: false, message: "ReviewId format isn't correct" });}
-
-        {return res.status(201).send(finalData)}
-}
 
 const updateReview = async function (req, res) {
     try {
@@ -225,4 +208,5 @@ const updateReview = async function (req, res) {
       }
     }
   };
+
   module.exports = { updateReview,createReview, deleteReview};
