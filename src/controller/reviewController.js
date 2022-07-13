@@ -140,7 +140,7 @@ const updateReview = async function (req, res) {
       category: book.category,
       subcategory: book.subcategory,
       isDeleted: book.isDeleted,
-      reviews: book.reviews,
+      reviews: updateReviewData.reviews,
       releasedAt: book.releasedAt,
       createdAt: book.createdAt,
       updatedAt: book.updatedAt,

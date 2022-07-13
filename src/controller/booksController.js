@@ -89,6 +89,7 @@ const getBook = async function (req, res) {
             } else {
                 return res.status(200).send({ status: true, message: "Books List", data: categoryCheck })
             };
+        
         }
         else if (req.query.subcategory) {
 
@@ -103,7 +104,9 @@ const getBook = async function (req, res) {
             };
         }
         else {
-            return res.status(400).send({ status: false, msg: "Please provide the details which you want to see" })
+           
+            let finaldata= await booksModel.find({isDeleted:false})
+            return res.status(200).send({ status:true, msg: "success", data:finaldata })
         }
     } catch (err) {
         return res.status(500).send({ msg: "Error", error: err.message });
