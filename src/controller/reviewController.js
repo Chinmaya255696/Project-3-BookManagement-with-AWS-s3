@@ -9,7 +9,7 @@ const createReview = async function (req, res) {
     let BookId = req.params.bookId
 
     if (Object.keys(data).length == 0) { 
-      return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
+      return res.status(400).send({ status: false, message: "Please provide your Book details in body" }) };
 
     if (!(/^[0-9a-fA-F]{24}$/.test(BookId))) { 
       return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
@@ -17,7 +17,7 @@ const createReview = async function (req, res) {
 
     if (!req.body.reviewedBy) req.body.reviewedBy = "Guest";
     else if ((req.body.reviewedBy).trim().length == 0) {
-      return res.status(400).send({ status: false, msg: "Please provide reviewedBy name" })
+      return res.status(400).send({ status: false, message: "Please provide reviewedBy name" })
     } else if (/\d/.test(req.body.reviewedBy)) {
       return res.status(400).send({ status: false, message: "reviewedBy cannot have numbers" });
     }
@@ -29,7 +29,7 @@ const createReview = async function (req, res) {
 
     if (!req.body.reviewedAt) req.body.reviewedAt = new Date()
 
-    if (!data.rating) { return res.status(400).send({ status: false, msg: "Rating field is required" }) };
+    if (!data.rating) { return res.status(400).send({ status: false, message: "Rating field is required" }) };
 
     if (data.rating) {
       if (!(data.rating >= 1 && data.rating <= 5)) {
@@ -38,7 +38,7 @@ const createReview = async function (req, res) {
     }
 
     if((data.isDeleted)===true)
-        return res.status(400).send({status:false,msg:"This isDeleted field value sholud be in false"})
+        return res.status(400).send({status:false,message:"This isDeleted field value sholud be in false"})
 
     let book = await booksModel.findOne({ _id: req.params.bookId, isDeleted: false });
     if (!book) { return res.status(404).send({ status: false, message: "BookId Not Found" }) };
@@ -77,7 +77,7 @@ const createReview = async function (req, res) {
     { return res.status(201).send({status:true, message:"Success", data:bookData}) }
   }
   catch (err) {
-    { return res.status(500).send({ status: false, msg: "Error", error: err.message }); }
+    { return res.status(500).send({ status: false, message: "Error", error: err.message }); }
   }
 };
 
@@ -106,17 +106,17 @@ const updateReview = async function (req, res) {
     }
 
     if (Object.keys(data).length == 0) {
-      return res.status(400).send({ status: false, msg: "Please provide your Review details in body", });
+      return res.status(400).send({ status: false, message: "Please provide your Review details in body", });
     }
 
     if (data.reviewedBy) {
       if (!data.reviewedBy.match(/^[a-zA-Z. ]+$/)) {
-        return res.status(400).send({ status: false, msg: "Reviewer can't be a number" })
+        return res.status(400).send({ status: false, message: "Reviewer can't be a number" })
       }
     }
     if(!data.reviewedBy)req.body.reviewedBy="Guest"
     else if (data.reviewedBy.trim().length == 0) {
-      return res.status(400).send({ status: false, msg: "Please provide reviewedBy name" })
+      return res.status(400).send({ status: false, message: "Please provide reviewedBy name" })
     }
 
     if (data.rating) {
@@ -125,11 +125,11 @@ const updateReview = async function (req, res) {
       }
     }
     if (data.review.trim().length == 0) {
-      return res.status(400).send({ status: false, msg: "Please provide review" })
+      return res.status(400).send({ status: false, message: "Please provide review" })
     }
     if (data.review) {
       if (!data.review.match(/^[a-zA-Z. ]+$/)) {
-        return res.status(400).send({ status: false, msg: "Review can't be a number" })
+        return res.status(400).send({ status: false, message: "Review can't be a number" })
       }
     }
 
@@ -155,7 +155,7 @@ const updateReview = async function (req, res) {
     { return res.status(200).send({ status: true, message: "Books list", data: data2 }); }
 
   } catch (err) {
-    { return res.status(500).send({ status: false, msg: "Error", error: err.message }); }
+    { return res.status(500).send({ status: false, message: "Error", error: err.message }); }
   }
 };
 

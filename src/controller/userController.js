@@ -7,14 +7,14 @@ const createUser = async function (req, res) {
     try {
         let data = req.body
 
-        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your User details in body" }) };
+        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please provide your User details in body" }) };
 
         if (!data.title || data.title.trim().length == 0) { return res.status(400).send({ status: false, message: "Title feild is required" }) };
 
 
 
         const keyValidTitle = function (Title) { return ['Mr', 'Mrs', 'Miss'].includes(Title) };
-        if (!keyValidTitle(data.title)) { return res.status(400).send({ status: false, msg: "Title should be among Mr, Mrs and Miss" }) };
+        if (!keyValidTitle(data.title)) { return res.status(400).send({ status: false, message: "Title should be among Mr, Mrs and Miss" }) };
 
 
         if (!data.name || data.name.trim().length == 0) { return res.status(400).send({ status: false, message: "Name field is required" }) }
@@ -41,14 +41,14 @@ const createUser = async function (req, res) {
         if (!(/^.{8,15}$/.test(data.password))) { return res.status(400).send({ status: false, message: "Password length should be in between 8 to 15" }) };
 
         if(data.address){
-            if(Object.keys(data.address).length==0){return res.status(400).send({ status: false, msg: "Please provide your address details" })}
+            if(Object.keys(data.address).length==0){return res.status(400).send({ status: false, message: "Please provide your address details" })}
         }
         
         let saveData = await userModel.create(data)
         { res.status(201).send({ status: true, message: 'Success', data: saveData }) };
     }
     catch (err) {
-        res.status(500).send({ status: false, msg: "Error", error: err.message });
+        res.status(500).send({ status: false, message: "Error", error: err.message });
     }
 };
 
@@ -59,11 +59,11 @@ const loginUser = async function (req, res) {
         let email1 = data.email;
         let password1 = data.password;
 
-        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
+        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please provide your Book details in body" }) };
 
-        if (!email1 || email1.trim().length == 0) { return res.status(400).send({ status: false, msg: "Please provide Email details " }) };
+        if (!email1 || email1.trim().length == 0) { return res.status(400).send({ status: false, message: "Please provide Email details " }) };
 
-        if (!password1 || password1.trim().length == 0) { return res.status(400).send({ status: false, msg: "Please provide Password details " }) };
+        if (!password1 || password1.trim().length == 0) { return res.status(400).send({ status: false, message: "Please provide Password details " }) };
 
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email1)) { return res.status(400).send({ status: false, message: 'Email should be valid email address' }) };
 
@@ -71,7 +71,7 @@ const loginUser = async function (req, res) {
 
 
         let user = await userModel.findOne({ email: email1, password: password1, });
-        if (!user) { return res.status(401).send({ status: false, msg: "Email or the Password doesn't match" }) };
+        if (!user) { return res.status(401).send({ status: false, message: "Email or the Password doesn't match" }) };
 
         let token = jwt.sign(
             {
@@ -89,7 +89,7 @@ const loginUser = async function (req, res) {
 
     }
     catch (err) {
-        res.status(500).send({ status: false, msg: err.message });
+        res.status(500).send({ status: false, message: err.message });
     }
 };
 
