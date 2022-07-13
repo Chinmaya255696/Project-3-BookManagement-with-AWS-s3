@@ -45,9 +45,6 @@ const createReview = async function (req, res) {
 
     const reviewData = await reviewModel.create(data)
    
-
-   
-    
     const countData = await reviewModel.countDocuments({ bookId: BookId, isDeleted: false })
     const updateReview = await booksModel.findByIdAndUpdate({ _id: BookId }, { $set: { reviews: countData } }, { new: true })
     let finalData = {
@@ -66,7 +63,7 @@ const createReview = async function (req, res) {
       category: book.category,
       subcategory: book.subcategory,
       isDeleted: book.isDeleted,
-      reviews: book.reviews,
+      reviews: updateReview.reviews,
       releasedAt: book.releasedAt,
       createdAt: book.createdAt,
       updatedAt: book.updatedAt,
@@ -169,7 +166,7 @@ const deleteReview = async function (req, res) {
       return res.status(404).send({ status: false, message: "Book not found" });
     }
 
-    //write validation for bothb cases
+    //write validation for both cases
     if (!/^[0-9a-fA-F]{24}$/.test(review_id)) {
       return res.status(400).send({ status: false, message: "ReviewId format isn't correct" });
     }

@@ -11,15 +11,13 @@ const createUser = async function (req, res) {
 
         if (!data.title || data.title.trim().length == 0) { return res.status(400).send({ status: false, message: "Title feild is required" }) };
 
-
-
         const keyValidTitle = function (Title) { return ['Mr', 'Mrs', 'Miss'].includes(Title) };
         if (!keyValidTitle(data.title)) { return res.status(400).send({ status: false, message: "Title should be among Mr, Mrs and Miss" }) };
 
 
         if (!data.name || data.name.trim().length == 0) { return res.status(400).send({ status: false, message: "Name field is required" }) }
         else if (/\d/.test(data.name)) {
-          return res.status(400).send({ status: false, message: "name cannot have numbers" });
+            return res.status(400).send({ status: false, message: "name cannot have numbers" });
         }
 
         if (!data.phone || data.phone.length == 0) { return res.status(400).send({ status: false, message: "Phone Number feild is required" }) };
@@ -40,10 +38,10 @@ const createUser = async function (req, res) {
 
         if (!(/^.{8,15}$/.test(data.password))) { return res.status(400).send({ status: false, message: "Password length should be in between 8 to 15" }) };
 
-        if(data.address){
-            if(Object.keys(data.address).length==0){return res.status(400).send({ status: false, message: "Please provide your address details" })}
+        if (data.address) {
+            if (Object.keys(data.address).length == 0) { return res.status(400).send({ status: false, message: "Please provide your address details" }) }
         }
-        
+
         let saveData = await userModel.create(data)
         { res.status(201).send({ status: true, message: 'Success', data: saveData }) };
     }
