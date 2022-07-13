@@ -6,21 +6,19 @@ const createBook = async function (req, res) {
     try {
         let data = req.body
 
-        // if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "Please provide your Book details in body" }) };
+        if (!data.title || data.title.trim().length == 0) { return res.status(400).send({ status: false, message: "Title field is required" }) };
 
-        if (!data.title || data.title.trim().length == 0) { return res.status(400).send({ status: false, msg: "Title field is required" }) };
+        if (!data.excerpt || data.excerpt.trim().length == 0) { return res.status(400).send({ status: false, message: "Excerpt field is required" }) };
 
-        if (!data.excerpt || data.excerpt.trim().length == 0) { return res.status(400).send({ status: false, msg: "Excerpt field is required" }) };
+        if (!data.userId || data.userId.trim().length == 0) { return res.status(400).send({ status: false, message: "UserId field is required" }) };
 
-        if (!data.userId || data.userId.trim().length == 0) { return res.status(400).send({ status: false, msg: "UserId field is required" }) };
+        if (!data.ISBN || data.ISBN.trim().length == 0) { return res.status(400).send({ status: false, message: "ISBN field is required" }) };
 
-        if (!data.ISBN || data.ISBN.trim().length == 0) { return res.status(400).send({ status: false, msg: "ISBN field is required" }) };
+        if (!data.category || data.category.trim().length == 0) { return res.status(400).send({ status: false, message: "Category field is required" }) };
 
-        if (!data.category || data.category.trim().length == 0) { return res.status(400).send({ status: false, msg: "Category field is required" }) };
+        if (!data.subcategory || data.subcategory.length == 0) { return res.status(400).send({ status: false, message: "Subcategory field is required" }) };
 
-        if (!data.subcategory || data.subcategory.length == 0) { return res.status(400).send({ status: false, msg: "Subcategory field is required" }) };
-
-        if (!data.releasedAt || data.releasedAt.length == 0) { return res.status(400).send({ status: false, msg: "releasedAt field is required" }) };
+        if (!data.releasedAt || data.releasedAt.length == 0) { return res.status(400).send({ status: false, message: "releasedAt field is required" }) };
         if(data.reviews){
             if(!data.reviews==0){return res.status(400).send({status:false, message:"Reviews field should be in default 0"})}
         }
@@ -29,12 +27,11 @@ const createBook = async function (req, res) {
         }
         //title and ISBN is unique or not
         let titleCheck = await booksModel.findOne({ title: data.title });
-        if (titleCheck) { return res.status(400).send({ status: false, msg: "Title is already registerd, try anothor" }) };
+        if (titleCheck) { return res.status(400).send({ status: false, message: "Title is already registerd, try anothor" }) };
 
         let isbnCheck = await booksModel.findOne({ ISBN: data.ISBN });
-        if (isbnCheck) { return res.status(400).send({ status: false, msg: "ISBN is already registerd, try anothor" }) };
+        if (isbnCheck) { return res.status(400).send({ status: false, message: "ISBN is already registerd, try anothor" }) };
 
-        // if (!(/^.{10,13}$/.test(data.ISBN))) { return res.status(400).send({ status: false, message: "ISBN length should be in between 10 to 13" }) };
 
         if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)/.test(data.ISBN))) { return res.status(400).send({ status: false, message: "ISBN should be in Number type and its length should be in 13 digits" }) };
 
@@ -45,7 +42,7 @@ const createBook = async function (req, res) {
         if (!(/^[0-9a-fA-F]{24}$/.test(userdata))) { return res.status(400).send({ status: false, message: "userId format isn't correct" }) }
 
         let objectIdCheck = await userModel.findById({ _id: userdata });
-        if (!(objectIdCheck)) { return res.status(404).send({ status: false, msg: "UserId is not valid" }) };
+        if (!(objectIdCheck)) { return res.status(404).send({ status: false, message: "UserId is not valid" }) };
 
         //after checking all validation than we structure our response data in JSON objectId from(key value pairs)
         let saveData = await booksModel.create(data)
@@ -53,7 +50,7 @@ const createBook = async function (req, res) {
         { return res.status(201).send({ status: true, message: "Success", data: saveData }) };
     }
     catch (err) {
-        { return res.status(500).send({ status: false, msg: "Error", error: err.message }) }
+        { return res.status(500).send({ status: false, message: "Error", error: err.message }) }
     }
 };
 
@@ -67,12 +64,12 @@ const getBook = async function (req, res) {
             if (!(/^[0-9a-fA-F]{24}$/.test(userId1))) { return res.status(400).send({ status: false, message: "userId format isn't correct" }) }
 
             let userIdCheck = await userModel.findById({ _id: userId1 })
-            if (!userIdCheck) { return res.status(404).send({ status: false, msg: "userId is not exist" }) }
+            if (!userIdCheck) { return res.status(404).send({ status: false, message: "userId is not exist" }) }
 
             let bookData = await booksModel.find({ userId: userIdCheck, isDeleted: false }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 }).sort({ title: 1 })
 
             if (bookData.length == 0) {
-                return res.status(404).send({ status: false, msg: "No such Books are found for this userId" })
+                return res.status(404).send({ status: false, message: "No such Books are found for this userId" })
             } else {
                 return res.status(200).send({ status: true, message: "Books List", data: bookData })
             }
@@ -85,7 +82,7 @@ const getBook = async function (req, res) {
             let categoryCheck = await booksModel.find({ category: category, isDeleted: false }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 }).sort({ title: 1 })
 
             if (categoryCheck.length == 0) {
-                return res.status(404).send({ status: false, msg: "No such similar books are found by the category" })
+                return res.status(404).send({ status: false, message: "No such similar books are found by the category" })
             } else {
                 return res.status(200).send({ status: true, message: "Books List", data: categoryCheck })
             };
@@ -98,7 +95,7 @@ const getBook = async function (req, res) {
             let subcategoryCheck = await booksModel.find({ subcategory: subcategory, isDeleted: false }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 }).sort({ title: 1 })
 
             if (subcategoryCheck.length == 0) {
-                return res.status(404).send({ status: false, msg: "No such similar books are found by the subcategory" })
+                return res.status(404).send({ status: false, message: "No such similar books are found by the subcategory" })
             } else {
                 return res.status(200).send({ status: true, message: "Books List", data: subcategoryCheck })
             };
@@ -109,7 +106,7 @@ const getBook = async function (req, res) {
             return res.status(200).send({ status:true, msg: "success", data:finaldata })
         }
     } catch (err) {
-        return res.status(500).send({ msg: "Error", error: err.message });
+        return res.status(500).send({ message: "Error", error: err.message });
     }
 };
 
