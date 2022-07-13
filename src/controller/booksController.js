@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const booksModel = require("../models/booksModel");
 const reviewModel = require("../models/reviewModel");
@@ -160,8 +159,11 @@ const updateBook = async function (req, res) {
         let data = req.body
         let bookId = req.params.bookId
 
+        if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
         let book = await booksModel.findById({ _id: bookId })
         if (!book || book.isDeleted == true) { return res.status(404).send({ status: false, message: "No Book Found by this BookId" }) };
+
+      
 
         if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please provide data in body" }) };
 

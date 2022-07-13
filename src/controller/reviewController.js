@@ -46,6 +46,10 @@ const createReview = async function (req, res) {
     const reviewData = await reviewModel.create(data)
    
 
+   
+    
+    const countData = await reviewModel.countDocuments({ bookId: BookId, isDeleted: false })
+    const updateReview = await booksModel.findByIdAndUpdate({ _id: BookId }, { $set: { reviews: countData } }, { new: true })
     let finalData = {
       _id: reviewData._id,
       bookId: book._id,
@@ -68,12 +72,6 @@ const createReview = async function (req, res) {
       updatedAt: book.updatedAt,
       reviewsData:finalData
     }
-    // if (/\d/.test(req.body.review)) {
-    //   return res.status(400).send({ status: false, message: "review cannot have numbers" });
-    // }
-    const countData = await reviewModel.countDocuments({ bookId: BookId, isDeleted: false })
-    const updateReview = await booksModel.findByIdAndUpdate({ _id: BookId }, { $set: { reviews: countData } }, { new: true })
-
     { return res.status(201).send({status:true, message:"Success", data:bookData}) }
   }
   catch (err) {
@@ -95,7 +93,7 @@ const updateReview = async function (req, res) {
     if (!book || book.isDeleted == true) {
       return res.status(404).send({ status: false, message: "No Book Found by this BookId" });
     }
-    //seperate them
+   
     if (!/^[0-9a-fA-F]{24}$/.test(reviewId)) {
       return res.status(400).send({ status: false, message: "ReviewId format isn't correct" });
     }
@@ -124,14 +122,11 @@ const updateReview = async function (req, res) {
         return res.status(400).send({ status: false, message: "Rating must be in between 1 to 5." })
       }
     }
+    if(data.review){
     if (data.review.trim().length == 0) {
       return res.status(400).send({ status: false, message: "Please provide review" })
     }
-    if (data.review) {
-      if (!data.review.match(/^[a-zA-Z. ]+$/)) {
-        return res.status(400).send({ status: false, message: "Review can't be a number" })
-      }
-    }
+  }
 
     let updateReviewData = await reviewModel.findOneAndUpdate(
       { _id: reviewId }, { $set: { reviewedBy: data.reviewedBy, rating: data.rating, review: data.review }, }, { new: true });
