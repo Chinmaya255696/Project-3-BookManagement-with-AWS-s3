@@ -38,11 +38,11 @@ const createBook = async function (req, res) {
         if (!(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) { return res.status(400).send({ status: false, message: "ReleasedAt format should be in YYYY-MM-DD" }) };
 
         //objectId valid or not and its length
-        let userdata = req.body.userId
-        if (!(/^[0-9a-fA-F]{24}$/.test(userdata))) { return res.status(400).send({ status: false, message: "userId format isn't correct" }) }
+        // let userdata = req.body.userId
+        // if (!(/^[0-9a-fA-F]{24}$/.test(userdata))) { return res.status(400).send({ status: false, message: "userId format isn't correct" }) }
 
-        let objectIdCheck = await userModel.findById({ _id: userdata });
-        if (!(objectIdCheck)) { return res.status(404).send({ status: false, message: "UserId is not valid" }) };
+        // let objectIdCheck = await userModel.findById({ _id: userdata });
+        // if (!(objectIdCheck)) { return res.status(404).send({ status: false, message: "UserId is not valid" }) };
 
         //after checking all validation than we structure our response data in JSON objectId from(key value pairs)
         let saveData = await booksModel.create(data)
@@ -159,7 +159,7 @@ const updateBook = async function (req, res) {
         let data = req.body
         let bookId = req.params.bookId
 
-        if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
+        // if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) { return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
         let book = await booksModel.findById({ _id: bookId })
         if (!book || book.isDeleted == true) { return res.status(404).send({ status: false, message: "No Book Found by this BookId" }) };
 

@@ -57,7 +57,7 @@ const loginUser = async function (req, res) {
         let email1 = data.email;
         let password1 = data.password;
 
-        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please provide your Book details in body" }) };
+        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please provide details in body" }) };
 
         if (!email1 || email1.trim().length == 0) { return res.status(400).send({ status: false, message: "Please provide Email details " }) };
 
@@ -69,7 +69,7 @@ const loginUser = async function (req, res) {
 
 
         let user = await userModel.findOne({ email: email1, password: password1, });
-        if (!user) { return res.status(401).send({ status: false, message: "Email or the Password doesn't match" }) };
+        if (!user) { return res.status(400).send({ status: false, message: "Email or the Password doesn't match" }) };
 
         let token = jwt.sign(
             {

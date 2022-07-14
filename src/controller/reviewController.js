@@ -9,7 +9,7 @@ const createReview = async function (req, res) {
     let BookId = req.params.bookId
 
     if (Object.keys(data).length == 0) { 
-      return res.status(400).send({ status: false, message: "Please provide your Book details in body" }) };
+      return res.status(400).send({ status: false, message: "Please provide details in body" }) };
 
     if (!(/^[0-9a-fA-F]{24}$/.test(BookId))) { 
       return res.status(400).send({ status: false, message: "BookId format isn't correct" }) }
@@ -144,7 +144,7 @@ const updateReview = async function (req, res) {
       reviewsData: data3.length == 0 ? [] : data3
     };
 
-    { return res.status(200).send({ status: true, message: "Books list", data: data2 }); }
+    { return res.status(200).send({ status: true, message: "Books list with review", data: data2 }); }
 
   } catch (err) {
     { return res.status(500).send({ status: false, message: "Error", error: err.message }); }
