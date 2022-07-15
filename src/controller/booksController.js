@@ -1,6 +1,38 @@
 const userModel = require("../models/userModel");
 const booksModel = require("../models/booksModel");
 const reviewModel = require("../models/reviewModel");
+const AWS = require("aws-sdk")
+
+
+AWS.config.update({
+    accessKeyId: "AKIAY3L35MCRVFM24Q7U",
+    secretAccessKey: "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",
+    region: "ap-south-1"
+})
+let uploadFile = async (file) => {
+    return new Promise(function (resolve, reject) {
+        // this function will upload file to aws and return the link
+        let s3 = new AWS.S3({ apiVersion: '2006-03-01' }); // we will be using the s3 service of aws
+
+        let uploadParams = {
+            ACL: "public-read",
+            Bucket: "classroom-training-bucket",  //HERE
+            Key: "Group11" + file.originalname, //HERE 
+            Body: file.buffer
+        }
+
+
+        s3.upload(uploadParams, function (err, data) {
+            if (err) {
+                return reject({ "error": err })
+            }
+            console.log(data)
+            console.log("file uploaded succesfully")
+            return resolve(data.Location)
+        })
+    })
+}
+
 
 const createBook = async function (req, res) {
     try {
@@ -37,13 +69,11 @@ const createBook = async function (req, res) {
 
         if (!(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) { return res.status(400).send({ status: false, message: "ReleasedAt format should be in YYYY-MM-DD" }) };
 
-        //objectId valid or not and its length
-        // let userdata = req.body.userId
-        // if (!(/^[0-9a-fA-F]{24}$/.test(userdata))) { return res.status(400).send({ status: false, message: "userId format isn't correct" }) }
-
-        // let objectIdCheck = await userModel.findById({ _id: userdata });
-        // if (!(objectIdCheck)) { return res.status(404).send({ status: false, message: "UserId is not valid" }) };
-
+        let files = req.files
+        if (files && files.length > 0) {
+            let uploadedFileURL = await uploadFile(files[0])
+            data.bookCover = uploadedFileURL
+        }
         //after checking all validation than we structure our response data in JSON objectId from(key value pairs)
         let saveData = await booksModel.create(data)
 
